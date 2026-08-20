@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IziRDC</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0b6e4f" />
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; }
+    button { padding: 12px 20px; font-size: 16px; border-radius: 8px; border: none; cursor: pointer; }
+    #loginBtn { background: #0b6e4f; color: white; }
+    #logoutBtn { background: #eee; }
+    #authScreen { text-align: center; margin-top: 80px; }
+  </style>
+</head>
+<body>
+
+  <div id="authScreen">
+    <h1>🇨🇩 IziRDC</h1>
+    <p>Actualités, taux de change et suivi de dépenses.</p>
+    <button id="loginBtn">Se connecter avec Google</button>
+  </div>
+
+  <div id="appContent" style="display:none;">
+    <p id="userInfo"></p>
+    <button id="logoutBtn">Se déconnecter</button>
+    <hr />
+    <div id="subscribeContainer"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+  <script src="/js/firebase-config.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/subscribe-example.js"></script>
+</body>
+</html>
