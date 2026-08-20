@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IziRDC — Admin</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 24px; }
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+    .card { background: #f4f6f5; border-radius: 10px; padding: 16px; }
+    .card .value { font-size: 28px; font-weight: bold; color: #0b6e4f; }
+    .card .label { font-size: 13px; color: #666; }
+    input, textarea { width: 100%; padding: 10px; margin: 6px 0; box-sizing: border-box; }
+    button { padding: 10px 18px; background: #0b6e4f; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    #keyScreen { text-align: center; margin-top: 80px; }
+  </style>
+</head>
+<body>
+
+  <div id="keyScreen">
+    <h1>🔒 IziRDC Admin</h1>
+    <p>Entre ta clé admin (ADMIN_SECRET_KEY sur Render)</p>
+    <input id="adminKeyInput" type="password" placeholder="Clé admin" />
+    <button id="unlockBtn">Déverrouiller</button>
+  </div>
+
+  <div id="dashboard" style="display:none;">
+    <h1>📊 Dashboard IziRDC</h1>
+    <button id="refreshBtn">Rafraîchir</button>
+
+    <div class="cards" id="statsCards"></div>
+
+    <hr style="margin:30px 0;" />
+
+    <h2>📣 Envoyer une notification à tous les users</h2>
+    <input id="notifTitle" placeholder="Titre" />
+    <textarea id="notifBody" placeholder="Message" rows="3"></textarea>
+    <button id="sendNotifBtn">Envoyer</button>
+  </div>
+
+  <script>
+    const keyScreen = document.getElementById("keyScreen");
+    const dashboard = document.getElementById("dashboard");
+    const statsCards = document.getElementById("statsCards");
+
+    function getAdminKey() {
+      return sessionStorage.getItem("izirdc_admin_key");
+    }
+
+    async function loadStats() {
+      const res = await fetch("/api/admin/stats", {
+        headers: { "x-admin-key": getAdminKey() },
+      });
+      if (res.status === 403) {
+        alert("Clé admin incorrecte.");
+        sessionStorage.removeItem("izirdc_admin_key");
+        location.reload();
+        return;
+      }
+      const data = await res.json();
+
+      const cards = [
+        { label: "MRR", value: `$${data.mrr}` },
+        { label: "ARR (projeté)", value: `$${data.arr}` },
+        { label: "Abonnés actifs", value: data.activeSubscribers },
+        { label: "En essai gratuit", value: data.trialUsers },
+        { label: "Total users", value: data.totalUsers },
+        { label: "Taux de conversion", value: `${data.conversionRate}%` },
+        { label: "Inscrits (7 derniers jours)", value: data.newSignups7d },
+        { label: "Inscrits (30 derniers jours)", value: data.newSignups30d },
+      ];
+
+      statsCards.innerHTML = cards
+        .map((c) => `<div class="card"><div class="value">${c.value}</div><div class="label">${c.label}</div></div>`)
+        .join("");
+    }
+
+    document.getElementById("unlockBtn").addEventListener("click", async () => {
+      const key = document.getElementById("adminKeyInput").value.trim();
+      if (!key) return;
+      sessionStorage.setItem("izirdc_admin_key", key);
+      keyScreen.style.display = "none";
+      dashboard.style.display = "block";
+      await loadStats();
+    });
+
+    document.getElementById("refreshBtn").addEventListener("click", loadStats);
+
+    document.getElementById("sendNotifBtn").addEventListener("click", async () => {
+      const title = document.getElementById("notifTitle").value.trim();
+      const body = document.getElementById("notifBody").value.trim();
+      if (!title || !body) return alert("Titre et message requis.");
+
+      const res = await fetch("/api/admin/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": getAdminKey() },
+        body: JSON.stringify({ title, body }),
+      });
+      const data = await res.json();
+      if (!res.ok) return alert("Erreur : " + (data.error || "inconnue"));
+      alert(`Notification envoyée à ${data.notifiedUsers} appareil(s).`);
+    });
+
+    if (getAdminKey()) {
+      keyScreen.style.display = "none";
+      dashboard.style.display = "block";
+      loadStats();
+    }
+  </script>
+</body>
+</html>
