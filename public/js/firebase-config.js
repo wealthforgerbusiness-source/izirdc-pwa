@@ -1,18 +1,16 @@
 // ============================================================
 // CONFIG FIREBASE WEB (frontend) — safe à commiter sur GitHub.
 // ============================================================
-// COMMENT REMPLIR CE FICHIER :
-// 1. Console Firebase → ⚙️ Paramètres du projet → onglet "Général"
-// 2. Section "Vos applications" → ton app Web (</>) → "Config"
-// 3. Remplace CHAQUE valeur ci-dessous par celle affichée.
+// Ces valeurs ne sont PAS des secrets : Firebase les protège via
+// les règles de sécurité Firestore/Auth, pas en les cachant.
 
 const firebaseConfig = {
-  apiKey: "REMPLACE_MOI_apiKey",
-  authDomain: "REMPLACE_MOI_authDomain",
-  projectId: "REMPLACE_MOI_projectId",
-  storageBucket: "REMPLACE_MOI_storageBucket",
-  messagingSenderId: "REMPLACE_MOI_messagingSenderId",
-  appId: "REMPLACE_MOI_appId",
+  apiKey: "AIzaSyBu-2Fu2NXzfXN8gdIL7nYV_UgNMOJBw7k",
+  authDomain: "izirdc-1d5ce.firebaseapp.com",
+  projectId: "izirdc-1d5ce",
+  storageBucket: "izirdc-1d5ce.firebasestorage.app",
+  messagingSenderId: "280213311410",
+  appId: "1:280213311410:web:e5c8f34982d2faab7f5eab",
 };
 
 firebase.initializeApp(firebaseConfig);
