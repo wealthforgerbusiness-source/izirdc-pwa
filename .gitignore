@@ -1,0 +1,10 @@
+node_modules/
+
+# Secrets — ne JAMAIS commit
+.env
+.env.local
+*serviceAccountKey*.json
+*firebase-adminsdk*.json
+
+# Fichiers système
+.DS_Store
